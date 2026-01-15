@@ -6,16 +6,22 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.TankDrive;
+import edu.wpi.first.wpilibj.Timer;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TimedDrive extends Command {
   private TankDrive drive;
-  private Command timedDrive;
+  private double seconds;
+  private Timer timer;
+
   /** Creates a new TimeDrive. */
   public TimedDrive(TankDrive drive, double seconds) {
     this.drive = drive;
-    timedDrive = Commands.runEnd(() -> drive.drive(), () -> drive.stop(), drive).withTimeout(seconds);
+    this.seconds = seconds;
+    timer = new Timer();
+
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drive);
   }
@@ -26,15 +32,25 @@ public class TimedDrive extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    timer.reset();
+    drive.drive();
+    timer.start();
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    drive.stop();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(timer.hasElapsed(seconds)) {
+      return true;
+    }
+
     return false;
   }
 }
