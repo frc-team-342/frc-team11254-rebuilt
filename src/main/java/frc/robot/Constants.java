@@ -12,6 +12,7 @@ package frc.robot;
  * <p>It is advised to statically import this class (or one of its inner classes) wherever the
  * constants are needed, to reduce verbosity.
  */
+
 public final class Constants {
   public static class DriveConstants{
     // Setting all the motors to an integer
@@ -24,4 +25,9 @@ public final class Constants {
     // Setting the controller port
     public static final int kDriverControllerPort = 0;
   }   
+    
+}
+  public static class shooterConstants{
+    public static final int SHOOTER = 0;//remeber to change when get motor identity
+  }
 }

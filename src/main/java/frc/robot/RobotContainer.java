@@ -12,9 +12,14 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.revrobotics.spark.SparkMax;
 import frc.robot.subsystems.TankDrive;
+import frc.robot.subsystems.Shooter;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,6 +32,10 @@ public class RobotContainer {
   private XboxController driver;
   private Command driveWithJoystick;
 
+  private Shooter shooter;
+  private XboxController operator;
+  private JoystickButton shootButton;
+  private JoystickButton unstuckButton;
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
@@ -35,6 +44,9 @@ public class RobotContainer {
     // Setting the Xbox Controller to the driver port
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
+  private Command shootCommand;
+  private Command unstuckCommand;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive = new TankDrive();
@@ -42,6 +54,13 @@ public class RobotContainer {
     // Runs the command continuously to drive with joystick
     driveWithJoystick = Commands.run(() -> drive.joystickDrive(driver));
 
+    shooter = new Shooter();
+    operator = new XboxController(1);
+    shootButton = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+    shootCommand = Commands.runEnd(() -> shooter.PIDShoot(3000), () -> shooter.stop(),  shooter);
+
+    unstuckButton = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
+    unstuckCommand = Commands.runEnd(() -> shooter.PIDShoot(-3000), () -> shooter.stop(), shooter);
     // Configure the trigger bindings
     configureBindings();
 
@@ -58,6 +77,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
+    shootButton.whileTrue(shootCommand);
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
     new Trigger(m_exampleSubsystem::exampleCondition)
         .onTrue(new ExampleCommand(m_exampleSubsystem));
@@ -65,6 +85,8 @@ public class RobotContainer {
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
     m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+
+
   }
 
   /**
