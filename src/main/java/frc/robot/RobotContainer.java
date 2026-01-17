@@ -32,12 +32,14 @@ public class RobotContainer {
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController m_driverController =
+    // Setting the Xbox Controller to the driver port
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     drive = new TankDrive();
     driver = new XboxController(0);
+    // Runs the command continuously to drive with joystick
     driveWithJoystick = Commands.run(() -> drive.joystickDrive(driver));
 
     // Configure the trigger bindings

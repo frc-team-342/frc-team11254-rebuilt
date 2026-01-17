@@ -19,6 +19,7 @@ import com.revrobotics.spark.SparkMax;
 import static frc.robot.Constants.DriveConstants.*;
 
 public class TankDrive extends SubsystemBase {
+  // Creates new objects
     private SparkMax frontLeft;
     private SparkMax frontRight;
     private SparkMax backLeft;
@@ -30,8 +31,8 @@ public class TankDrive extends SubsystemBase {
     private SparkMaxConfig backRightConfig;
   /** Creates a new TankDrive. */
   public TankDrive() {
-    frontLeft = new SparkMax(FRONT_LEFT_MOTOR, MotorType.kBrushless);
-    frontRight = new SparkMax(FRONT_RIGHT_MOTOR, MotorType.kBrushless);
+    // This is creating and configuring the motors
+    frontLeft = new SparkMax(FRONT_LEFT_MOTOR, MotorType.kBrushless); 
     backLeft = new SparkMax(BACK_LEFT_MOTOR, MotorType.kBrushless);
     backRight = new SparkMax(BACK_RIGHT_MOTOR, MotorType.kBrushless);
     frontLeftConfig = new SparkMaxConfig();
@@ -41,6 +42,8 @@ public class TankDrive extends SubsystemBase {
     tankDrive = new DifferentialDrive(frontLeft, frontRight);
       
 
+
+    // Tells the motors how to stop and also inverts one wheel so they both spin the same direction
     frontLeftConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(60)
@@ -50,6 +53,7 @@ public class TankDrive extends SubsystemBase {
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(60);
 
+    // Makes the back left and right wheels follow the front left and right
     backLeftConfig.apply(frontLeftConfig).follow(FRONT_LEFT_MOTOR);
     backRightConfig.apply(frontRightConfig).follow(FRONT_RIGHT_MOTOR);
 
@@ -60,14 +64,17 @@ public class TankDrive extends SubsystemBase {
   }
 
 
+  /** Makes the robot drive with joystick */
   public void joystickDrive(XboxController driver){
     tankDrive.arcadeDrive(MathUtil.applyDeadband(driver.getLeftY(), 0.05), MathUtil.applyDeadband(driver.getRightY(), 0.05));
   }
 
+  /** Drive at a constant speed */
   public void drive(){
     tankDrive.arcadeDrive(0.5, 0);
   }
 
+  /** Calls to stop the motors */
   public void stop(){
     frontLeft.stopMotor();
     frontRight.stopMotor();

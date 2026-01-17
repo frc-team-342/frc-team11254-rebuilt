@@ -33,6 +33,7 @@ public class TimedDrive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // Resets the timer to 0 when called and drives for a certain amount of time
     timer.reset();
     drive.drive();
     timer.start();
@@ -41,12 +42,14 @@ public class TimedDrive extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    // Stops driving when command ends
     drive.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // When the amount of time set has passed, it will return true which ends the command
     if(timer.hasElapsed(seconds)) {
       return true;
     }
