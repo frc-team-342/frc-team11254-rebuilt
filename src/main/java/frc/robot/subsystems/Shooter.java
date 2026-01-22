@@ -24,15 +24,22 @@ public class Shooter extends SubsystemBase {
   private SparkMaxConfig motorShooterConfig;
   private SparkClosedLoopController sparkControl;
   private RelativeEncoder encoder;
+  private SparkMax motorIntake;
+  private SparkMaxConfig motorIntakeConfig;
   /**builds the motor and defines its limits as well as type (/°W^)
    * PID is set up here it will modify running speed of the motor
    * configs designated here
    */
   public Shooter() {
-    motorShooter = new SparkMax(SHOOTER, MotorType.kBrushless);
+    motorShooter = new SparkMax(SHOOTER, MotorType.kBrushed);
     motorShooterConfig = new SparkMaxConfig();
     sparkControl = motorShooter.getClosedLoopController();
     encoder = motorShooter.getEncoder();
+    motorIntake = new SparkMax(SHOOTERINTAKE, MotorType.kBrushed);
+    motorIntakeConfig = new SparkMaxConfig();
+    motorIntakeConfig
+      .idleMode(IdleMode.kBrake)
+      .smartCurrentLimit(60);
 //PID woot! woot!
     motorShooterConfig
       .idleMode(IdleMode.kBrake)
@@ -64,4 +71,10 @@ public void PIDShoot(double fireSpeed){
   @Override
   public void periodic() {
   }
+public void intakeMotorShooter(){
+  motorIntake.set(.4);
+}
+public void intakeMotorShooterStop(){
+  motorIntake.stopMotor();
+}
 }

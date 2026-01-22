@@ -11,6 +11,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -59,6 +60,7 @@ public class RobotContainer {
 
   private Command shootCommand;
   private Command unstuckinator;
+  private Command shooterIntake;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. 
    * here is where speeds are set as well as the controll devices assigned
@@ -79,7 +81,9 @@ public class RobotContainer {
     shooter = new Shooter();
     //fire
     shootButton = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
-    shootCommand = Commands.runEnd(() -> shooter.PIDShoot(3000), () -> shooter.stop(),  shooter);
+    shooterIntake = new WaitCommand(0.5).andThen( Commands.runEnd(() -> {shooter.intakeMotorShooter();}, () -> shooter.intakeMotorShooterStop(), shooter));
+    shootCommand = Commands.runEnd(() -> shooter.PIDShoot(3000), () -> shooter.stop(),  shooter).alongWith(shooterIntake);
+    
     //if fuel gets stuck use this to reverse motor(left bumper)
     unstuckButton = new JoystickButton(operator, XboxController.Button.kLeftBumper.value);
     unstuckinator = Commands.runEnd(() -> shooter.PIDShoot(-500), () -> shooter.stop(), shooter);
