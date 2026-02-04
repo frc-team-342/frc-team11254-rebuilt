@@ -9,6 +9,8 @@ import frc.robot.Constants.OperatorConstants;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.XboxController;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -32,16 +34,15 @@ public class TankDrive extends SubsystemBase {
   /** Creates a new TankDrive. */
   public TankDrive() {
     // This is creating and configuring the motors
-    frontLeft = new SparkMax(FRONT_LEFT_MOTOR, MotorType.kBrushless); 
-    backLeft = new SparkMax(BACK_LEFT_MOTOR, MotorType.kBrushless);
-    backRight = new SparkMax(BACK_RIGHT_MOTOR, MotorType.kBrushless);
+    frontLeft = new SparkMax(FRONT_LEFT_MOTOR, MotorType.kBrushed); 
+    frontRight = new SparkMax(FRONT_RIGHT_MOTOR, MotorType.kBrushed);
+    backLeft = new SparkMax(BACK_LEFT_MOTOR, MotorType.kBrushed);
+    backRight = new SparkMax(BACK_RIGHT_MOTOR, MotorType.kBrushed);
     frontLeftConfig = new SparkMaxConfig();
     frontRightConfig = new SparkMaxConfig();
     backLeftConfig = new SparkMaxConfig();
     backRightConfig = new SparkMaxConfig();
     tankDrive = new DifferentialDrive(frontLeft, frontRight);
-      
-
 
     // Tells the motors how to stop and also inverts one wheel so they both spin the same direction
     frontLeftConfig
@@ -56,6 +57,7 @@ public class TankDrive extends SubsystemBase {
     // Makes the back left and right wheels follow the front left and right
     backLeftConfig.apply(frontLeftConfig).follow(FRONT_LEFT_MOTOR);
     backRightConfig.apply(frontRightConfig).follow(FRONT_RIGHT_MOTOR);
+    
 
     frontLeft.configure(frontLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     frontRight.configure(frontRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -66,7 +68,7 @@ public class TankDrive extends SubsystemBase {
 
   /** Makes the robot drive with joystick */
   public void joystickDrive(XboxController driver){
-    tankDrive.arcadeDrive(MathUtil.applyDeadband(driver.getLeftY(), 0.05), MathUtil.applyDeadband(driver.getRightY(), 0.05));
+    tankDrive.arcadeDrive(MathUtil.applyDeadband(-driver.getLeftY(), 0.05), MathUtil.applyDeadband(-driver.getRightX(), 0.05));
   }
 
   /** Drive at a constant speed */
@@ -84,5 +86,20 @@ public class TankDrive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void initSendable(SendableBuilder builder) {
+    super.initSendable(builder);
+    builder.setSmartDashboardType("TankDrive");
+
+    builder.addDoubleProperty("FL Voltage", () -> frontLeft.getAppliedOutput() * RobotController.getBatteryVoltage(), null);
+    builder.addDoubleProperty("FR Voltage", () -> frontRight.getAppliedOutput() * RobotController.getBatteryVoltage(), null);
+    builder.addDoubleProperty("BL Voltage", () -> backLeft.getAppliedOutput() * RobotController.getBatteryVoltage(), null);
+    builder.addDoubleProperty("BR Voltage", () -> backRight.getAppliedOutput() * RobotController.getBatteryVoltage(), null);
+
+    builder.addDoubleProperty("FR Current", () -> frontRight.getOutputCurrent(), null);
+    builder.addDoubleProperty("FL Current", () -> frontLeft.getOutputCurrent(), null);
+    builder.addDoubleProperty("BR Current", () -> backRight.getOutputCurrent(), null);
+    builder.addDoubleProperty("BL Current", () -> backLeft.getOutputCurrent(), null);
   }
 }
