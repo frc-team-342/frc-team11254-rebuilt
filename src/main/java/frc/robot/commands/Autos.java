@@ -8,6 +8,7 @@ import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.TankDrive;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
@@ -16,6 +17,13 @@ public final class Autos {
   }
   public static Command runIntakeSysID(Intake intake){
     return intake.runSysID();
+  }
+
+  public static Command centerAuto(TankDrive drive, Intake shoot){
+    return Commands.sequence(
+      Commands.runEnd(() -> shoot.PIDShoot(3000), () -> shoot.stop(), shoot).withTimeout(8),
+      new TimedDrive(drive,1)
+    );
   }
 
   private Autos() {

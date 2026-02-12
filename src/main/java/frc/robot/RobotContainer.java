@@ -79,6 +79,7 @@ public class RobotContainer {
 
     autoChooser = new SendableChooser<>();
     autoChooser.addOption("Intake SysID", Autos.runIntakeSysID(intakeSubsystem));
+    autoChooser.addOption("Center Auto", Autos.centerAuto(drive, intakeSubsystem));
     SmartDashboard.putData(autoChooser);
 
     SmartDashboard.putData(intakeSubsystem);

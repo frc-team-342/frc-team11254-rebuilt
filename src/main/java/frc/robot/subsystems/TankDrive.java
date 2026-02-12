@@ -74,7 +74,7 @@ public class TankDrive extends SubsystemBase {
 
   /** Drive at a constant speed */
   public void drive(){
-    tankDrive.arcadeDrive(0.5, 0);
+    tankDrive.arcadeDrive(0.3, 0);
   }
 
   /** Calls to stop the motors */
