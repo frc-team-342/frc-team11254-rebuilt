@@ -31,4 +31,11 @@ public final class Constants {
     public static final int INTAKE_ID = 5;
     public static final int FEEDER_ID = 6;
   }
+  public static class climbconstants {
+    public static final int RIGHTCLIMB = 7;
+    public static final int LEFTCLIMB = 8;
+    public static final double CLIMBGEAR = 20.25;
+    public static final double CLIMBERUP = 0;//find what pos is max
+    public static final double CLIMBDOWN = 0;
+  }
 }
