@@ -25,6 +25,7 @@ import frc.robot.subsystems.TankDrive;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.subsystems.climber;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -39,6 +40,7 @@ public class RobotContainer {
   
   private XboxController driver;
   private XboxController operator;
+  private climber climbSubsystem;
 
   // The robot's subsystems and commands are defined here...
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
@@ -52,6 +54,8 @@ public class RobotContainer {
   private JoystickButton outakeButton;
   private JoystickButton shootButton;
   private JoystickButton unstuckButton;
+  private JoystickButton climbupButton;
+  private JoystickButton climbdownButton;
 
   private Command driveWithJoystick;
   private Command spinIntake;
@@ -59,6 +63,8 @@ public class RobotContainer {
   private Command shootCommand;
   private Command unstuckinator;
   private Command shooterIntake;
+  private Command climbUp;
+  private Command Climbdown;
 
   private SendableChooser<Command> autoChooser;
   
@@ -76,6 +82,8 @@ public class RobotContainer {
     shootCommand = Commands.runEnd(() -> intakeSubsystem.PIDShoot(3000), () -> intakeSubsystem.stop(),  intakeSubsystem);
     unstuckinator = Commands.runEnd(() -> intakeSubsystem.PIDShoot(500), () -> intakeSubsystem.stop(), intakeSubsystem);
     driveWithJoystick = Commands.run(() -> drive.joystickDrive(driver), drive);
+    climbUp = Commands.run(() -> climbSubsystem.climbup(), climbSubsystem);
+    Climbdown = Commands.run(() -> climbSubsystem.climbdown(), climbSubsystem);
 
     autoChooser = new SendableChooser<>();
     autoChooser.addOption("Intake SysID", Autos.runIntakeSysID(intakeSubsystem));
@@ -91,6 +99,8 @@ public class RobotContainer {
     outakeButton = new JoystickButton(operator, XboxController.Button.kB.value);
     unstuckButton = new JoystickButton(operator, XboxController.Button.kLeftBumper.value); //left bumper
     shootButton = new JoystickButton(operator, XboxController.Button.kRightBumper.value);
+    climbupButton = new JoystickButton(operator, XboxController.Button.kX.value);
+    climbdownButton = new JoystickButton(operator, XboxController.Button.kY.value);
 
     SmartDashboard.putData(drive);
     
@@ -117,6 +127,8 @@ public class RobotContainer {
     intakeButton.whileTrue(spinIntake); // a button
     outakeButton.whileTrue(outake); // b button
     shootButton.whileTrue(shootCommand); //right bumper
+    climbupButton.onTrue(climbUp);
+    climbdownButton.onTrue(Climbdown);
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
