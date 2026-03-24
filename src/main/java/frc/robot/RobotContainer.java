@@ -96,6 +96,7 @@ public class RobotContainer {
     autoChooser.addOption("Intake SysID", Autos.runIntakeSysID(intakeSubsystem));
     autoChooser.addOption("Center Auto", Autos.centerAuto(drive, intakeSubsystem));
     autoChooser.addOption("Side Auto", Autos.sideAuto(drive,intakeSubsystem));
+    autoChooser.addOption("Climb Auto", Autos.climbAuto(drive, climbSubsystem, climbSubsystem));
     SmartDashboard.putData(autoChooser);
     SmartDashboard.putData(climbSubsystem);
     SmartDashboard.putData(intakeSubsystem);
