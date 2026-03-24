@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.commands.ShootWithDelay;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.TankDrive;
+import frc.robot.subsystems.climber;
 
 public final class Autos {
   /** Example static factory for an autonomous command. */
@@ -24,6 +25,14 @@ public final class Autos {
     return Commands.sequence(
       drive.timedDrive(0.4, 1),
       new ShootWithDelay(shoot)
+    );
+  }
+
+  public static Command climbAuto(TankDrive drive, climber climbUp, climber climbDown){
+    return Commands.sequence(
+      new ClimbUpForAuto(climbUp).withTimeout(2),
+      drive.timedDrive(-.2, 3).withTimeout(3),
+      new ClimbDownForAuto(climbDown).withTimeout(2)
     );
   }
 
