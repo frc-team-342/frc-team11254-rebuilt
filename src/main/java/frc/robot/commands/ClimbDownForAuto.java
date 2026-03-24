@@ -9,10 +9,10 @@ import frc.robot.subsystems.climber;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ClimbDownForAuto extends Command {
-  private climber climbDown;
+  private climber climb;
   /** Creates a new ClimbDownForAuto. */
   public ClimbDownForAuto(climber climb) {
-    this.climbDown=climbDown;
+    this.climb = climb;
     addRequirements(climb);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -24,7 +24,7 @@ public class ClimbDownForAuto extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climbDown.climbdown();
+    climb.climbdown();
   }
 
   // Called once the command ends or is interrupted.

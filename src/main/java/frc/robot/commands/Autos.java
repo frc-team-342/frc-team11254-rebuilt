@@ -31,7 +31,7 @@ public final class Autos {
   public static Command climbAuto(TankDrive drive, climber climbUp, climber climbDown){
     return Commands.sequence(
       new ClimbUpForAuto(climbUp).withTimeout(2),
-      drive.timedDrive(.1, 3).withTimeout(3),
+      drive.timedDrive(-.2, 3).withTimeout(3),
       new ClimbDownForAuto(climbDown).withTimeout(2)
     );
   }
