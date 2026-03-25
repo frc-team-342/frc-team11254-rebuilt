@@ -23,7 +23,7 @@ public final class Autos {
 
   public static Command centerAuto(TankDrive drive, Intake shoot){
     return Commands.sequence(
-      drive.timedDrive(-0.4, 1),
+      drive.timedDrive(-0.2, 1.35),
       new ShootWithDelay(shoot)
     );
   }
@@ -38,7 +38,7 @@ public final class Autos {
 
   public static Command sideAuto(TankDrive drive, Intake shoot){
     return Commands.sequence(
-      drive.timedDrive(-0.3, .6), //WAS 0.4
+      drive.timedDrive(-0.15, .75), //WAS 0.4
       new ShootWithDelay(shoot)
     );
   }
