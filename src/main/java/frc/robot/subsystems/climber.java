@@ -27,7 +27,8 @@ public class climber extends SubsystemBase {
   private SparkMaxConfig climbMotorRightConfig;
   private SparkMaxConfig climbMotorLeftConfig;
   private SparkClosedLoopController sparkControl;
-  private RelativeEncoder climbEncoder;
+  private RelativeEncoder rightClimbEncoder;
+  private RelativeEncoder leftClimbEncoder;
   private SparkClosedLoopController climbPID;
   /** Creates a new climber. */
   public climber() {
@@ -38,7 +39,8 @@ public class climber extends SubsystemBase {
     climbMotorRightConfig = new SparkMaxConfig();
     climbPID = climbMotorRight.getClosedLoopController();
 
-    climbEncoder = climbMotorRight.getEncoder();
+    rightClimbEncoder = climbMotorRight.getEncoder();
+    leftClimbEncoder = climbMotorLeft.getEncoder();
 
     climbMotorLeftConfig
       .idleMode(IdleMode.kBrake)
@@ -48,8 +50,10 @@ public class climber extends SubsystemBase {
     climbMotorRightConfig
       .idleMode(IdleMode.kBrake)
       .smartCurrentLimit(60);
-    climbMotorRightConfig.closedLoop.pid(0.2,0,0).outputRange(-1, 1).allowedClosedLoopError(.1, ClosedLoopSlot.kSlot0);//range for output still needs to be found
+    climbMotorRightConfig.closedLoop.pid(0.15,0,0.01).outputRange(-1, 1).allowedClosedLoopError(.1, ClosedLoopSlot.kSlot0);//range for output still needs to be found
     climbMotorRightConfig.encoder.positionConversionFactor(CLIMBERPOS);
+
+    climbMotorLeftConfig.encoder.positionConversionFactor(CLIMBERPOS);
 
     climbMotorRight.configure(climbMotorRightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     climbMotorLeft.configure(climbMotorLeftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
@@ -63,8 +67,11 @@ public class climber extends SubsystemBase {
   public void climbPosition(double rightposition){
     sparkControl.setSetpoint(rightposition, ControlType.kPosition);
   }
-  double getClimbPosition(){
-    return climbEncoder.getPosition();
+  public double getRightClimbPosition(){
+    return rightClimbEncoder.getPosition();
+  }
+  public double getLeftClimbPosition() {
+    return leftClimbEncoder.getPosition();
   }
   public void cliberSpeed(double climbSpeed){
     climbMotorRight.set(climbSpeed);
@@ -77,23 +84,24 @@ public class climber extends SubsystemBase {
   }
 
   public boolean atPosition(double position) {
-    return Math.abs(climbEncoder.getPosition() - position) <= 0.1;
+    return Math.abs(rightClimbEncoder.getPosition() - position) <= 0.1;
   }
 
-  public Command climbUp() {
-    return Commands.run(() -> {climbMotorRight.set(-0.05);}, this);
-  }
+  // public Command climbUp() {
+  //   return Commands.run(() -> {climbMotorRight.set(-0.05);}, this);
+  // }
 
-  public Command climbDown() {
-    return Commands.run(() -> {climbMotorRight.set(0.2);}, this).until(() -> atPosition(CLIMBDOWN));
-  }
+  // public Command climbDown() {
+  //   return Commands.run(() -> {climbMotorRight.set(0.2);}, this).until(() -> atPosition(CLIMBDOWN));
+  // }
 
 
   public void initSendable(SendableBuilder builder){
     super.initSendable(builder);
     builder.setSmartDashboardType("Climber");
     builder.addDoubleProperty("climbergoal", () -> climbPID.getSetpoint(), null);
-    builder.addDoubleProperty("climberpos", ()-> getClimbPosition(), null);
+    builder.addDoubleProperty("Right Climber Position", ()-> getRightClimbPosition(), null);
+    builder.addDoubleProperty("Left Climber Position", () -> getLeftClimbPosition(), null);
     builder.addDoubleProperty("Climber Voltage", () -> climbMotorRight.getAppliedOutput() * climbMotorRight.getBusVoltage(), null);
     builder.addBooleanProperty("At Top", () -> atPosition(CLIMBERUP), null);
     builder.addBooleanProperty("At Bottom", () -> atPosition(CLIMBDOWN), null);
