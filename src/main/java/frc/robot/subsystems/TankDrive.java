@@ -85,7 +85,7 @@ public class TankDrive extends SubsystemBase {
 
   /** Drive and rotate at the given speeds */
   public void drive(double speed, double rotationSpeed){
-    tankDrive.arcadeDrive(speed, rotationSpeed);
+    tankDrive.arcadeDrive(speed * .8, rotationSpeed * .5);
   }
 
   public Command timedDrive(double speed, double time) {

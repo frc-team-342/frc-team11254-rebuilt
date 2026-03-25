@@ -134,7 +134,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void spinFeeder() {
-    feeder.set(0.6);
+    feeder.set(-0.6);
   }
 
   public Command runSysID(){

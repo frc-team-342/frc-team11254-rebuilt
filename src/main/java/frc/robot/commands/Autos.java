@@ -22,14 +22,14 @@ public final class Autos {
 
   public static Command centerAuto(TankDrive drive, Intake shoot){
     return Commands.sequence(
-      drive.timedDrive(0.4, 1),
+      drive.timedDrive(-0.4, 1),
       new ShootWithDelay(shoot)
     );
   }
 
   public static Command sideAuto(TankDrive drive, Intake shoot){
     return Commands.sequence(
-      drive.timedDrive(0.3, .6), //WAS 0.4
+      drive.timedDrive(-0.3, .6), //WAS 0.4
       new ShootWithDelay(shoot)
     );
   }
